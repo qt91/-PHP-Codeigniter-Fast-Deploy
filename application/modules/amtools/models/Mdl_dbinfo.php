@@ -10,37 +10,101 @@ class Mdl_dbinfo extends CI_Model
     function __construct()
     {
         parent::__construct();
-        
-        $number = array('TINYINT','SMALLINT','MEDIUMINT','INT','INTEGER','BIGINT','FLOAT','DOUBLE','DOUBLE PRECISION','REAL','DECIMAL','NUMERIC','BIT');
-        $text = array('CHAR','VARCHAR','TINYBLOB','TINYTEXT','BLOB','TEXT','MEDIUMBLOB','MEDIUMTEXT','LONGBLOB','LONGTEXT','ENUM','SET');
-        $time = array('DATE','DATETIME','TIMESTAMP','TIME','YEAR');
+        //Using Helper
+        $this->load->helper('am_generateModel');
+        $this->load->helper('am_generateController');
+
+        $number = array(
+            'TINYINT',
+            'SMALLINT',
+            'MEDIUMINT',
+            'INT',
+            'INTEGER',
+            'BIGINT',
+            'FLOAT',
+            'DOUBLE',
+            'DOUBLE PRECISION',
+            'REAL',
+            'DECIMAL',
+            'NUMERIC',
+            'BIT'
+        );
+        $text   = array(
+            'CHAR',
+            'VARCHAR',
+            'TINYBLOB',
+            'TINYTEXT',
+            'BLOB',
+            'TEXT',
+            'MEDIUMBLOB',
+            'MEDIUMTEXT',
+            'LONGBLOB',
+            'LONGTEXT',
+            'ENUM',
+            'SET'
+        );
+        $time   = array(
+            'DATE',
+            'DATETIME',
+            'TIMESTAMP',
+            'TIME',
+            'YEAR'
+        );
         //date-int,date-date,date-timestamp,
         
-        $this->data['DbType'] = array('number'=>$number,
-                                      'text'=>$text,
-                                      'time'=>$time);
-        // $this->load->model('m_db_table');
-    }   
-
-    public function Setup($Connect)
-    {
-        $this->config['id'] = $Connect->id;
-        $this->config['hostname'] = $Connect->host;
-        $this->config['username'] = $Connect->user;
-        $this->config['password'] = $Connect->pass;
-        $this->config['database'] = $Connect->data;
-        $this->config['dbdriver'] = "mysql";
-        $this->config['dbprefix'] = "";
-        $this->config['pconnect'] = FALSE;
-        $this->config['db_debug'] = TRUE;
-        $this->config['cache_on'] = FALSE;
-        $this->config['cachedir'] = "";
-        $this->config['char_set'] = "utf8";
-        $this->config['dbcollat'] = "utf8_general_ci";
-        // Get info database
-		
-        //$this->new_db = $this->load->database($this->config,TRUE);
+        $this->data['DbType'] = array(
+            'number' => $number,
+            'text' => $text,
+            'time' => $time
+        );
     }
-
     
+    /**
+     * Get tables name and fields name
+     * 
+     */
+    function getFields()
+    {
+        
+        $DBName  = (string) $this->db->database;
+        $Sql     = "SHOW TABLES FROM $DBName";
+        $TblName = $this->db->query($Sql);
+        
+        $Tbls = $TblName->result_array();
+        foreach ($Tbls as $Tbl) {
+            //Get Table Name
+            $Tbl = $Tbl['Tables_in_' . $DBName];
+            
+            
+            generateModel($this->db,$Tbl);
+            generateController($this->db,$Tbl);
+            //START Get Field FROM table name ================
+            $Sql         = "SHOW COLUMNS FROM $DBName.$Tbl";
+            $FieldResult = $this->db->query($Sql);
+            $Fields      = $FieldResult->result_array();
+            foreach ($Fields as $Field) {
+                echo $Field['Field'] . '<br/>';
+            }
+            //END Get Field FROM table name ===================
+        }
+    }
+    
+    /**
+     * 
+     */
+    function convert_type($type)
+    {
+        foreach ($this->data['DbType'] as $key => $Types) {
+            foreach ($Types as $Type) {
+                if ($Type == strtoupper($type))
+                    return $key;
+            }
+        }
+    }
+    
+    
+    
+    public function ganerateController($table){
+
+    }
 }
