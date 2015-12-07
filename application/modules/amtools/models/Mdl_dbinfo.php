@@ -65,7 +65,8 @@ class Mdl_dbinfo extends CI_Model
      */
     function getFields()
     {
-        
+        $data_result = array();
+
         $DBName  = (string) $this->db->database;
         $Sql     = "SHOW TABLES FROM $DBName";
         $TblName = $this->db->query($Sql);
@@ -74,7 +75,7 @@ class Mdl_dbinfo extends CI_Model
         foreach ($Tbls as $Tbl) {
             //Get Table Name
             $Tbl = $Tbl['Tables_in_' . $DBName];
-            
+            $data_result[$Tbl] = array();
             
             generateModel($this->db,$Tbl);
             generateController($this->db,$Tbl);
@@ -83,10 +84,12 @@ class Mdl_dbinfo extends CI_Model
             $FieldResult = $this->db->query($Sql);
             $Fields      = $FieldResult->result_array();
             foreach ($Fields as $Field) {
-                echo $Field['Field'] . '<br/>';
+                $data_result[$Tbl][] = $Field['Field'];
+                // echo $Field['Field'] . '<br/>';
             }
             //END Get Field FROM table name ===================
         }
+        return $data_result;
     }
     
     /**

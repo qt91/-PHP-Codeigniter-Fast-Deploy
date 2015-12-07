@@ -1,0 +1,20 @@
+
+tbl_field
+	id (string) ex: fastdeploy.tbl_users.id
+	validation json
+
+	{
+		name: 'id',
+		description: 'Mã',
+		validation: {
+			required: true, //or false
+			matches: 'matches[form_item]', //or ''
+			min_length: 'min_length[3]', //or ''
+			max_length: 'max_length[11]', //or ''
+			
+		},
+		select: true
+	}
+
+database.table.field
+fastdeploy.tbl_users.id
