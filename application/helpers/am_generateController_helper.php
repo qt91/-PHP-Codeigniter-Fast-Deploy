@@ -1,6 +1,6 @@
 <?php
 //Create Module with table name
-    function generateController($db, $table)
+    function generateController($db, $table, $validation)
     {
         // if(file_exists(APPPATH."/models/".$table."model.php")){
         //     if(readline("The model ".$table."model.php already exists. Overwrite (Y/n)?")==="Y"){
@@ -21,7 +21,7 @@
         $file .= PHP_EOL; //New Line
         $file .= 'defined("BASEPATH") or exit("No direct script access allowed");' . PHP_EOL;
         $file .= PHP_EOL; //New Line
-        $file .= 'class ' . ucfirst($controllerName) . ' extends AM_Controller {' . PHP_EOL;
+        $file .= 'class ' . ucfirst($controllerName) . ' extends Am_controller {' . PHP_EOL;
         $file .= PHP_EOL; //New Line
 
         //START Construct ========================================================
@@ -61,7 +61,7 @@
 	        $file.='		                    );'.PHP_EOL;
 			$file.='			$this->data[\''.$field.'\'] = $'.$field.';'.PHP_EOL;
 			$file.='			if($config[\'suffix\'] == \'/\'){'.PHP_EOL;
-	        $file.='		        $config[\'suffix\'] .= \'?\'.$field.\'=$\'.$field'.PHP_EOL;
+	        $file.='		        $config[\'suffix\'] .= \'?\'.$field.\'=$\'.$field;'.PHP_EOL;
 	        $file.='		    }else{'.PHP_EOL;
 	        $file.='		        $config[\'suffix\'] .= \'&\'.$field.\'=$\'.$field;'.PHP_EOL;
 	        $file.='		    }'.PHP_EOL;
@@ -96,6 +96,37 @@
 		$file.=''.PHP_EOL;
 		$file.='	}'.PHP_EOL;
         //END GET ========================================================
+        
+        //POST
+        $file .= '  //Add new row'.PHP_EOL;
+        $file .= "    public function POST(){".PHP_EOL;
+        $file .= "  ".PHP_EOL;
+        $file .= '        if($_SERVER[\'REQUEST_METHOD\'] == \'POST\'){'.PHP_EOL;
+        $file .= "          //Form validation       ".PHP_EOL;
+        //Add Auto form validation
+        foreach ($fields as $field) {
+            $str_val = $_POST[$table.$field.'Validation'].$_POST[$table.$field.'ValidationNumber'];
+            $str_description = $_POST[$table.$field.'Description'];
+            $file .= "            ".'$this'."->form_validation->set_rules_val('".$field."','".$str_description."','".$str_val."',".'$this'."->form_fields);".PHP_EOL;
+        }
+        $file .= "            //Run from validation".PHP_EOL;
+        $file .= "              if(".'$this'."->form_validation->run()){".PHP_EOL;
+        $file .= '                  $fields'." = ".'$this'."->form_validation->get_field_value(".'$this'."->form_fields);".PHP_EOL;
+        $file .= "                      extract(".'$fields'.");".PHP_EOL;
+        $file .= "  ".PHP_EOL;
+        $file .= "                    if(".'$this'."->mdl_companies->insert(".'$fields'.",1)){".PHP_EOL;
+        $file .= "                        ".'$this'."->qt_success('Thêm mới thành công!');".PHP_EOL;
+        $file .= "                   }else{".PHP_EOL;
+        $file .= "                       ".'$this'."->qt_error('Thêm mới không thành công!');".PHP_EOL;
+        $file .= "                   }".PHP_EOL;
+        $file .= "           }else{".PHP_EOL;
+        $file .= "               //show validate".PHP_EOL;
+        $file .= "                ".'$this'."->qt_error_validate();".PHP_EOL;
+        $file .= "             }".PHP_EOL;
+        $file .= "          }else{".PHP_EOL;
+        $file .= "           ".'$this'."->load->view('Post', ".'$this'."->data);".PHP_EOL;
+        $file .= "       }".PHP_EOL;
+        $file .= "    }".PHP_EOL;
         
         $file .= '}'; //End Class
         

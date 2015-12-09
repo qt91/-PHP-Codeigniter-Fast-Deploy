@@ -1,7 +1,7 @@
 <?php
 
 defined("BASEPATH") or exit("No direct script access allowed");
-class Mdl_users extends AM_Model {
+class Mdl_users extends Am_model {
 
     public $id;
     public $username;
@@ -15,19 +15,21 @@ class Mdl_users extends AM_Model {
     public $tableName          = 'tbl_users';
     public $primaryColumn      = 'id';
 
-    public    $listField=array(
-        "id"=>$this->id,
-        "username"=>$this->username,
-        "password"=>$this->password,
-        "title"=>$this->title,
-        "name"=>$this->name,
-        "email"=>$this->email,
-        "create_date"=>$this->create_date,
-        "status"=>$this->status,
-    );
+    public $listField = array();
 
     public function __construct(){
         parent::__construct();
+        //New
+        $this->listField = array(
+            "id"=>$this->id,
+            "username"=>$this->username,
+            "password"=>$this->password,
+            "title"=>$this->title,
+            "name"=>$this->name,
+            "email"=>$this->email,
+            "create_date"=>$this->create_date,
+            "status"=>$this->status,
+        );
         $this->init($this->tableName, $this->primary_column_name);
     }
 

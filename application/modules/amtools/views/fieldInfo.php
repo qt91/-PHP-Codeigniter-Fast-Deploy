@@ -12,10 +12,10 @@
 <title>Metronic | Data Tables - Responsive Datatables</title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">F
 <meta content="" name="description"/>
 <meta content="" name="author"/>
-<!-- BEGIN GLOBAL MANDATORY STYLES -->
+<!-- BEGIN GLOBAL MANDATORY STYLES -->F
 <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&amp;subset=all" rel="stylesheet" type="text/css">
 <link href="<?php echo base_url('public/default/admin4'); ?>/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 <link href="<?php echo base_url('public/default/admin4'); ?>/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css">
@@ -1240,14 +1240,13 @@
 			<!-- END PAGE HEADER-->
 			<!-- BEGIN PAGE CONTENT-->
 			<div class="row">
+				<form action="<?php echo base_url('amtools/Database/create'); ?>" method="POST">
 				<div class="col-md-12">
 					<div class="note note-success note-shadow">
-						<p>
-							 Please try to re-size your browser window in order to see the tables in responsive mode.
-						</p>
+						<button type="submit" class="btn btn-primary">THỰC HIỆN</button>
 					</div>
 					<!-- BEGIN SAMPLE TABLE PORTLET-->
-					<?php foreach ($data_result as $key => $value) : ?>
+					<?php foreach ($data_result as $key => $value) :  ?>
 					<div class="portlet box green">
 						<div class="portlet-title">
 							<div class="caption">
@@ -1273,24 +1272,27 @@
 							<?php foreach ($value as $ke => $valu) : ?>
 							<tr>
 								<td>
-									 <?php echo $valu; ?>
+									 <?php echo $valu['Field']; ?>
 								</td>
 								<td>
-									 <?php echo $valu; ?>
+									 <a href="javascript:;" class="AMFDescription" id="<?php echo $key.$valu['Field']; ?>Description" data-type="text" data-pk="1" data-original-title="Enter "><?php echo $valu['Field']; ?>
+									</a>
+										<input type="hidden" class="<?php echo $key.$valu['Field']; ?>Description" name="<?php echo $key.$valu['Field']; ?>Description" value="<?php echo $valu['Field']; ?>">
 								</td>
 								<td>
 									<div class="form-group">
-										<div class="checkbox-list">
-											<a href="javascript:;" id="AMFValidation" data-type="select2" data-pk="1" data-original-title="Enter tags">
-									required </a>
+										<a href="javascript:;" class="AMFValidation" id="<?php echo $key.$valu['Field']; ?>Validation" data-type="select2" data-pk="1" data-original-title="Enter "><?php echo $valu['Validation']; ?>
+										</a>
+										<input type="hidden" class="<?php echo $key.$valu['Field']; ?>Validation" name="<?php echo $key.$valu['Field']; ?>Validation" value="<?php echo $valu['Validation']; ?>">
 									<br/>
-									<a href="javascript:;" id="AMFValidationValueNumber" data-type="address" data-pk="1" data-original-title="Thêm giá trị">
-
+									<a href="javascript:;" id="<?php echo $key.$valu['Field']; ?>ValidationNumber" name="<?php echo $key.$valu['Field']; ?>ValidationNumber" class ="AMFValidationValueNumber" data-value="max_length[100]" data-type="address" data-pk="1" data-original-title="Thêm giá trị">
 									</a>
-										</div>
+									<input type="hidden" class="<?php echo $key.$valu['Field']; ?>ValidationNumber" name="<?php echo $key.$valu['Field']; ?>ValidationNumber" value="">
 									</div>
 
-									<div class="form-group">
+
+									<?php if(false): ?>
+								<div class="form-group">
 										<label>matches</label>
 										<select class="form-control">
 										<?php foreach ($value as $k => $val): ?>
@@ -1298,13 +1300,7 @@
 										<?php endforeach; ?>
 										</select>
 									</div>
-
-									<div class="form-group">
-										<label class="col-md-3 control-label">min_length</label>
-										<div class="col-md-4">
-											<input type="text" class="form-control" placeholder="Enter text">
-										</div>
-									</div>
+								<?php endif; ?>
 								</td>
 							</tr>
 							<?php endforeach; ?>
@@ -1314,6 +1310,7 @@
 					</div>
 					<?php endforeach; ?>
 				</div>
+				</form>
 			</div>
 			<!-- END PAGE CONTENT-->
 		</div>
@@ -1374,13 +1371,28 @@ Layout.init(); // init current layout
 Demo.init(); // init demo features
 FormEditable.init();
 
-$('#AMFValidation').editable({
+$('.AMFValidation').editable({
             inputclass: 'form-control input-medium',
             select2: {
                 tags: [<?php get_validation(); ?>],
                 tokenSeparators: [",", " "]
-            }
+            },
+            success: function(response, newValue) {
+		        $("."+this.id).val(newValue);
+		    }
         });
+
+$('.AMFDescription').editable({
+            inputclass: 'form-control input-medium',
+            select2: {
+                tags: [<?php get_validation(); ?>],
+                tokenSeparators: [",", " "]
+            },
+            success: function(response, newValue) {
+		        $("."+this.id).val(newValue);
+		    }
+        });
+
 });
 
 (function ($) {
@@ -1453,26 +1465,43 @@ $('#AMFValidation').editable({
 
 }(window.jQuery));
 
-$('#AMFValidationValueNumber').editable({
+$('.AMFValidationValueNumber').editable({
             url: '/post',
-            value: [<?php get_validation(''); ?>],
+            value: {min_length: "1"},//[<?php get_validation(''); ?>],
             validate: function (value) {
                 if (value.city == '') return 'city is required!';
             },
             display: function (value) {
-                if(!value) {
-            $(this).empty();
-            return; 
-        } // End if
+	            if(!value) {
+	            $(this).empty();
+	            return; 
+	        } // End if
 
-        var html = '';
+	        var html = '';
 
-        <?php getValidationNumber(3); ?>
+	        <?php getValidationNumber(3); ?>
 
-        
-        $(this).html(html); 
-            }
-        });
+	        
+	        $(this).html(html); 
+        },
+        success: function(response, newValue) {
+        	var str = '';
+        	$.each( newValue, function( key, value ) {
+			  if(value != ""){
+			  	if(str != '')
+			  		str += "|";
+			  	str += key + "[" + value+"]";
+			  }
+			});
+		    $("."+this.id).val(str);
+		    }
+    // });
+
+// $('.AMFValidationValueNumber').editable({
+//     value: {
+//         min_length: "1",
+//     }   
+ });
 </script>
 
 </body>

@@ -2,11 +2,11 @@
 
 defined("BASEPATH") or exit("No direct script access allowed");
 
-class Users extends Am_controller {
+class Settings extends AM_Controller {
 
 	public function __construct(){
 		parent::__construct();
-		$this->load->model('Mdl_users');
+		$this->load->model('Mdl_settings');
 	}
 
 	public function GET($page_number = 0){
@@ -15,17 +15,13 @@ class Users extends Am_controller {
 
 		//Search All Field
 		$id = $this->input->get('id');
-		$username = $this->input->get('username');
-		$password = $this->input->get('password');
-		$title = $this->input->get('title');
 		$name = $this->input->get('name');
-		$email = $this->input->get('email');
-		$create_date = $this->input->get('create_date');
-		$status = $this->input->get('status');
+		$value = $this->input->get('value');
+		$description = $this->input->get('description');
+		$type = $this->input->get('type');
+		$state = $this->input->get('state');
 
 		$config['suffix'] = "/";
-		//New
-		$arg_where = array();
 
 		if($id != false){
 			$arg_where[]  = array(  
@@ -38,58 +34,7 @@ class Users extends Am_controller {
 		                    );
 			$this->data['id'] = $id;
 			if($config['suffix'] == '/'){
-		        $config['suffix'] .= '?'.$field.'=$'.$field;
-		    }else{
-		        $config['suffix'] .= '&'.$field.'=$'.$field;
-		    }
-		}
-
-		if($username != false){
-			$arg_where[]  = array(  
-								'field'=> 'username',
-								'operator'=>'=',
-								'value'=> $username,
-								'connect'=>'AND',
-								'group'=> 1,
-								'type'=>'id'
-		                    );
-			$this->data['username'] = $username;
-			if($config['suffix'] == '/'){
-		        $config['suffix'] .= '?'.$field.'=$'.$field;
-		    }else{
-		        $config['suffix'] .= '&'.$field.'=$'.$field;
-		    }
-		}
-
-		if($password != false){
-			$arg_where[]  = array(  
-								'field'=> 'password',
-								'operator'=>'=',
-								'value'=> $password,
-								'connect'=>'AND',
-								'group'=> 1,
-								'type'=>'id'
-		                    );
-			$this->data['password'] = $password;
-			if($config['suffix'] == '/'){
-		        $config['suffix'] .= '?'.$field.'=$'.$field;
-		    }else{
-		        $config['suffix'] .= '&'.$field.'=$'.$field;
-		    }
-		}
-
-		if($title != false){
-			$arg_where[]  = array(  
-								'field'=> 'title',
-								'operator'=>'=',
-								'value'=> $title,
-								'connect'=>'AND',
-								'group'=> 1,
-								'type'=>'id'
-		                    );
-			$this->data['title'] = $title;
-			if($config['suffix'] == '/'){
-		        $config['suffix'] .= '?'.$field.'=$'.$field;
+		        $config['suffix'] .= '?'.$field.'=$'.$field
 		    }else{
 		        $config['suffix'] .= '&'.$field.'=$'.$field;
 		    }
@@ -106,58 +51,75 @@ class Users extends Am_controller {
 		                    );
 			$this->data['name'] = $name;
 			if($config['suffix'] == '/'){
-		        $config['suffix'] .= '?'.$field.'=$'.$field;
+		        $config['suffix'] .= '?'.$field.'=$'.$field
 		    }else{
 		        $config['suffix'] .= '&'.$field.'=$'.$field;
 		    }
 		}
 
-		if($email != false){
+		if($value != false){
 			$arg_where[]  = array(  
-								'field'=> 'email',
+								'field'=> 'value',
 								'operator'=>'=',
-								'value'=> $email,
+								'value'=> $value,
 								'connect'=>'AND',
 								'group'=> 1,
 								'type'=>'id'
 		                    );
-			$this->data['email'] = $email;
+			$this->data['value'] = $value;
 			if($config['suffix'] == '/'){
-		        $config['suffix'] .= '?'.$field.'=$'.$field;
+		        $config['suffix'] .= '?'.$field.'=$'.$field
 		    }else{
 		        $config['suffix'] .= '&'.$field.'=$'.$field;
 		    }
 		}
 
-		if($create_date != false){
+		if($description != false){
 			$arg_where[]  = array(  
-								'field'=> 'create_date',
+								'field'=> 'description',
 								'operator'=>'=',
-								'value'=> $create_date,
+								'value'=> $description,
 								'connect'=>'AND',
 								'group'=> 1,
 								'type'=>'id'
 		                    );
-			$this->data['create_date'] = $create_date;
+			$this->data['description'] = $description;
 			if($config['suffix'] == '/'){
-		        $config['suffix'] .= '?'.$field.'=$'.$field;
+		        $config['suffix'] .= '?'.$field.'=$'.$field
 		    }else{
 		        $config['suffix'] .= '&'.$field.'=$'.$field;
 		    }
 		}
 
-		if($status != false){
+		if($type != false){
 			$arg_where[]  = array(  
-								'field'=> 'status',
+								'field'=> 'type',
 								'operator'=>'=',
-								'value'=> $status,
+								'value'=> $type,
 								'connect'=>'AND',
 								'group'=> 1,
 								'type'=>'id'
 		                    );
-			$this->data['status'] = $status;
+			$this->data['type'] = $type;
 			if($config['suffix'] == '/'){
-		        $config['suffix'] .= '?'.$field.'=$'.$field;
+		        $config['suffix'] .= '?'.$field.'=$'.$field
+		    }else{
+		        $config['suffix'] .= '&'.$field.'=$'.$field;
+		    }
+		}
+
+		if($state != false){
+			$arg_where[]  = array(  
+								'field'=> 'state',
+								'operator'=>'=',
+								'value'=> $state,
+								'connect'=>'AND',
+								'group'=> 1,
+								'type'=>'id'
+		                    );
+			$this->data['state'] = $state;
+			if($config['suffix'] == '/'){
+		        $config['suffix'] .= '?'.$field.'=$'.$field
 		    }else{
 		        $config['suffix'] .= '&'.$field.'=$'.$field;
 		    }
@@ -173,7 +135,7 @@ class Users extends Am_controller {
 		                    );
 
 		$this->data['data'] = $this->mdl_company->select($arg_default);
-		$config['base_url'] = base_url('users/get');
+		$config['base_url'] = base_url('settings/get');
 		
 		$config['total_rows'] = $this->data['data']['count'];
 		
@@ -184,20 +146,17 @@ class Users extends Am_controller {
 		$this->pagination->initialize($config); 
 
 	}
-  	//Add new row
+  //Add new row
     public function POST(){
-  		
-
+  
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
           //Form validation       
-            $this->form_validation->set_rules_val('id','id','required',$this->form_fields);
-            $this->form_validation->set_rules_val('username','Tên','required',$this->form_fields);
-            $this->form_validation->set_rules_val('password','password','required',$this->form_fields);
-            $this->form_validation->set_rules_val('title','title','required',$this->form_fields);
-            $this->form_validation->set_rules_val('name','name','required',$this->form_fields);
-            $this->form_validation->set_rules_val('email','email','required',$this->form_fields);
-            $this->form_validation->set_rules_val('create_date','create_date','required',$this->form_fields);
-            $this->form_validation->set_rules_val('status','status','required',$this->form_fields);
+            $this->form_validation->set_rules_val('id','Mã','required,integer',$this->form_fields);
+            $this->form_validation->set_rules_val('name','name','required,alpha_numericmin_length[2]|max_length[12]|exact_length[120]|greater_than[212]|greater_than_equal_to[43254]|less_than[158]|less_than_equal_to[245]',$this->form_fields);
+            $this->form_validation->set_rules_val('value','value','required',$this->form_fields);
+            $this->form_validation->set_rules_val('description','description','required',$this->form_fields);
+            $this->form_validation->set_rules_val('type','type','required',$this->form_fields);
+            $this->form_validation->set_rules_val('state','state','required',$this->form_fields);
             //Run from validation
               if($this->form_validation->run()){
                   $fields = $this->form_validation->get_field_value($this->form_fields);
@@ -213,13 +172,7 @@ class Users extends Am_controller {
                 $this->qt_error_validate();
              }
           }else{
-          	$this->data['view'] = array('title'=>'THÊM MỚI');
-          	$db = $this->load->database('dbname');
-			$this->load->model('amtools/Mdl_dbinfo');
-			$data_result = $this->Mdl_dbinfo->getFields();
-			// print_r($data_result);
-			$this->data['data'] = $data_result['tbl_users'];
-            $this->load->view('POST', $this->data);
+           $this->load->view('Post', $this->data);
        }
     }
 }

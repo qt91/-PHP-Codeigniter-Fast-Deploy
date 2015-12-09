@@ -76,18 +76,65 @@ class Mdl_dbinfo extends CI_Model
             //Get Table Name
             $Tbl = $Tbl['Tables_in_' . $DBName];
             $data_result[$Tbl] = array();
-            
-            generateModel($this->db,$Tbl);
-            generateController($this->db,$Tbl);
+
             //START Get Field FROM table name ================
-            $Sql         = "SHOW COLUMNS FROM $DBName.$Tbl";
+            $Sql         = "SHOW FIELDS FROM $DBName.$Tbl";
             $FieldResult = $this->db->query($Sql);
             $Fields      = $FieldResult->result_array();
             foreach ($Fields as $Field) {
-                $data_result[$Tbl][] = $Field['Field'];
                 // echo $Field['Field'] . '<br/>';
+                //Clean data
+                //Check Required
+                $temp = $Field;
+
+                $ex = explode('(', $Field['Type']);
+                $ex1 = $ex[0];
+                if(count($ex) == 2)
+                    $ex2 = str_replace(')', '', $ex[1]);
+                $validation = '';
+                // switch ($ex1) {
+                //     case 'int':
+                //         $validation .= "integer";
+                //         break;
+                //     case 'varchar':
+                //         $validation .= "max_length[$ex2]";
+                //         break;
+                //     case 'text':
+                //         $validation .= "max_length[$ex2]";
+                //         break;
+                // }
+
+                if($Field['Null'] == 'NO'){
+                    if($validation != '')
+                        $validation .='|';
+                    $validation .= 'required';
+                }
+
+                $Field['Validation'] = $validation;
+                $data_result[$Tbl][] = $Field;
             }
             //END Get Field FROM table name ===================
+        }
+        return $data_result;
+    }
+
+    function ganerateFile($validation){
+        $data_result = array();
+
+        $DBName  = (string) $this->db->database;
+        $Sql     = "SHOW TABLES FROM $DBName";
+        $TblName = $this->db->query($Sql);
+        
+        $Tbls = $TblName->result_array();
+        foreach ($Tbls as $Tbl) {
+            //Get Table Name
+            $Tbl = $Tbl['Tables_in_' . $DBName];
+            $data_result[$Tbl] = array();
+            
+            //Create File =========================
+            generateModel($this->db,$Tbl);
+            generateController($this->db,$Tbl, $validation);
+            ////Create File =========================
         }
         return $data_result;
     }

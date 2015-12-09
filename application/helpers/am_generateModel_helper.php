@@ -20,7 +20,7 @@
         $file .= PHP_EOL; //New Line
         $file .= 'defined("BASEPATH") or exit("No direct script access allowed");' . PHP_EOL;
         
-        $file .= 'class ' . ucfirst($modelName) . ' extends AM_Model {' . PHP_EOL;
+        $file .= 'class ' . ucfirst($modelName) . ' extends Am_model {' . PHP_EOL;
         $file .= PHP_EOL; //New Line
         foreach ($db->field_data($table) as $fdata) {
             if ($fdata->primary_key == 1) {
@@ -42,7 +42,7 @@
         $file .= PHP_EOL; //New Line
         
         
-        $file .= '    public    $listField=array(' . PHP_EOL;
+        $file .= '    public $listField = array(' . PHP_EOL;
         foreach ($fields as $field) {
             $file .= '        "' . $field . '"=>$this->' . $field . ',' . PHP_EOL;
         }
